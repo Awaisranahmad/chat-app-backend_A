@@ -29,3 +29,53 @@
 Success:
 ```json
 { "success": true, "data": { ... } }
+
+Error:
+
+json
+{ "success": false, "error": "message" }
+Setup
+npm install
+
+Create .env file:
+
+text
+MONGO_URI=your_mongodb_uri
+PORT=3000
+node index.js
+
+text
+
+---
+
+## 🧪 4. Test Endpoints (Edge Cases)
+
+Thunder Client / Postman mein yeh cases test karo:
+
+### Users
+- **Missing field in POST** – send only `{}` → should return 400 with validation error.
+- **Invalid ID in GET/PUT/DELETE** (e.g., `"123"`) → should return 400 "Invalid ID".
+- **Non‑existent ID** (correct format but not in DB) → should return 404.
+- **PUT with empty body** → should return 400 "At least name or status required".
+
+### Messages
+- **POST without `text`** → validation error.
+- **GET with invalid user IDs** → 400.
+- **DELETE with message ID that doesn’t exist** → 404.
+- **DELETE with correct ID but different logged‑in user** (if auth) → 403.
+
+---
+
+## ✅ Final Checklist for Day 13/14
+
+| Task | Status |
+|------|--------|
+| Consistent error responses (success: false) | ⬜ |
+| Global error handler | ⬜ |
+| Mongoose validations (runValidators: true) | ⬜ |
+| README.md with all endpoints | ⬜ |
+| Test all edge cases | ⬜ |
+| GitHub push with updated code | ⬜ |
+
+**Ab tu yeh tasks kar. Koi error aaye to bata. 💪**
+
