@@ -1,0 +1,210 @@
+Express.js - SERVER FRAMWORK
+Express is minimal and flexibal node.js FRAMWORK
+Provides a robust set of features for building web and mobile APIs.
+simplifies routing middleware integration, and handling HTTP request/response.
+
+HTTP METHODS
+GET Retrieve data read 
+POST create new data
+PUT Replace entire resource
+PATCH Partially update resource
+DELETE remove resource
+
+HTTP Status Code  
+200   ok                     successful GET,PUT,PATCH
+201  created                 successful POST
+400  Bad request             Client sent invalid data
+404  Not Found               request resource doesn't exist
+500  Internal SERVER error   unexpected SERVER error
+
+Express setup - step by step
+
+npm init -y
+npm install express
+
+Basice SERVER Index.js
+const express = require('express');
+cont app= express();
+const port =3000;
+
+app.use(express.json());
+
+app.get('/',(req,res)=>{
+    consol.log('first page')
+})
+
+//routes go here
+
+app.listen(port,()=>{
+    consol.log(`SERVER running on http://localhost:${port}`);
+})
+
+Routing handling different URL &METHODS
+app.get('/api/users', (req, res) => {
+  res.json(usersArray);   // send JSON response
+});
+
+app.get('/api/users/:id', (req, res) => {
+  const id = parseInt(req.params.id);
+  const user = users.find(u => u.id === id);
+  if (user) res.json(user);
+  else res.status(404).json({ error: 'User not found' });
+});
+
+POST Route 
+app.post('/api/users', (req, res) => {
+  const { name, status } = req.body;   // destructuring
+  if (!name) {
+    return res.status(400).json({ error: 'Name is required' });
+  }
+  const newUser = {
+    id: users.length + 1,
+    name,
+    status: status || 'online'
+  };
+  users.push(newUser);
+  res.status(201).json(newUser);
+});
+
+Important:
+
+The route must be placed after app.use(express.json()) – otherwise req.body will be undefined.
+
+Use res.status(201).json(...) to indicate “Created”.
+
+
+
+Middleware – express.json()
+Middleware is a function that runs before the route handler.
+
+express.json() parses incoming JSON request bodies and populates req.body.
+
+Rule: Place all middleware before your routes (especially POST/PUT routes that depend on req.body).
+
+3. Route Parameters (req.params) vs Query Parameters (req.query)
+Type	Example URL	Access in code
+Route parameter	/users/5	req.params.id → "5"
+Query parameter	/users?age=25	req.query.age → "25"
+4. Sending Responses
+res.send('text') – sends plain text or HTML.
+
+res.json({ key: value }) – sends JSON (automatically sets Content-Type: application/json).
+
+Always use res.json() for API endpoints (mobile apps expect JSON).
+
+5. 404 Handler – Catch‑all for undefined routes
+javascript
+// Must be placed AFTER all other routes
+app.use((req, res) => {
+  res.status(404).json({ error: 'Route not found' });
+});
+🧪 Testing APIs – Thunder Client (VS Code Extension)
+Why Thunder Client?
+Lightweight alternative to Postman.
+
+Works inside VS Code – no separate app needed.
+
+How to test a GET request:
+Open Thunder Client (⚡ icon in left sidebar).
+
+Method: GET
+
+URL: http://localhost:3000/api/users
+
+Click Send.
+
+Response (JSON) appears on the right.
+
+How to test a POST request:
+Method: POST
+
+URL: http://localhost:3000/api/users
+
+Headers tab: Add Content-Type: application/json
+
+Body tab → select raw → JSON
+
+Enter JSON data, e.g.:
+
+json
+{
+  "name": "Zainab Ali",
+  "status": "offline"
+}
+Click Send.
+
+Expected response status: 201 Created with the new user object.
+
+Common mistakes & fixes:
+Mistake	Fix
+Content-Type header missing	Always add Content-Type: application/json for POST/PUT
+Server not running	Run node index.js in terminal
+Wrong URL (e.g., missing http://)	Always start with http://localhost:3000
+Route returns 404	Check if route is defined and server restarted after changes
+✅ Day 9 Progress Checklist (Your Achievements)
+Express installed via npm install express
+
+Basic server created and running on port 3000
+
+Defined multiple GET routes (/, /about, /api/status, /api/users, /api/users/:id)
+
+Implemented POST route to create new users
+
+Used express.json() middleware to parse JSON bodies
+
+Understood destructuring (const { name, status } = req.body)
+
+Tested GET and POST requests with Thunder Client
+
+Learned HTTP status codes (200, 201, 400, 404, 500)
+
+Understood the importance of middleware order (middleware first, then routes)
+
+Created a 404 catch‑all handler
+
+
+const express = require('express');
+const app = express();
+const port = 3000;
+
+// Middleware
+app.use(express.json());
+
+// Fake database
+const users = [
+  { id: 1, name: 'Ali Ahmed', status: 'online' },
+  { id: 2, name: 'Fatima Khan', status: 'online' },
+  { id: 3, name: 'Ahmed Hassan', status: 'offline' }
+];
+
+// GET routes
+app.get('/', (req, res) => res.send('Welcome to Chat app backend'));
+app.get('/about', (req, res) => res.send('This is chat app API v1.0'));
+app.get('/api/status', (req, res) => res.json({ status: 'running', timestamp: new Date(), version: '1.0.0' }));
+app.get('/api/users', (req, res) => res.json(users));
+app.get('/api/users/:id', (req, res) => {
+  const id = parseInt(req.params.id);
+  const user = users.find(u => u.id === id);
+  user ? res.json(user) : res.status(404).json({ error: 'User not found' });
+});
+
+// POST route
+app.post('/api/users', (req, res) => {
+  const { name, status } = req.body;
+  if (!name) return res.status(400).json({ error: 'Name is required' });
+  const newUser = { id: users.length + 1, name, status: status || 'online' };
+  users.push(newUser);
+  res.status(201).json(newUser);
+});
+
+// 404 handler – must be last
+app.use((req, res) => {
+  res.status(404).json({ error: 'Route not found' });
+});
+
+// Start server
+app.listen(port, () => {
+  console.log(`✅ Server running on http://localhost:${port}`);
+  console.log('  GET  /api/users');
+  console.log('  POST /api/users');
+});
