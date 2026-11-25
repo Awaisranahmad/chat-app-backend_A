@@ -1,18 +1,16 @@
-const mongoose= require('mongoose');
-require('dotenv').config()
-const connectDB= async ()=>{
+const mongoose = require("mongoose");
+const config = require("./config");
 
-try {
-  await mongoose.connect(process.env.MONGO_URI),console.log("Mongoose Connected ")
-} catch (
-  err
-) {
-  console.log('error failed to connect',err
+const connectDB = async () => {
+  try {
+    // Falls back to mongodb://localhost:27017/chat-app when MONGO_URI
+    // is not set (see config.js / .env.example).
+    await mongoose.connect(config.mongoUri);
+    console.log("Mongoose Connected");
+  } catch (err) {
+    console.log("error failed to connect", err);
+    process.exit(1);
+  }
+};
 
-  )
-  process.exit(1);
-}
-
-}
-
-module.exports= connectDB;
+module.exports = connectDB;
